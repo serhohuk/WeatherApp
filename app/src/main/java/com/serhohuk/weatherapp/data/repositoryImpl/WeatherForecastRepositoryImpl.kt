@@ -27,7 +27,13 @@ class WeatherForecastRepositoryImpl : WeatherForecastRepository {
         return Resource.Error(error = ErrorData(error?.cod,error?.message))
     }
 
-    override suspend fun getForecastWeather(cityName: String, language: String): Response<WeatherForecast> {
-        TODO("Not yet implemented")
+    override suspend fun getForecastWeather(cityName: String, language: String): Resource<WeatherForecast> {
+        val response = weatherAPI.forecastWeather5Days(cityName, "metric", language, WEATHER_API)
+        if (response.isSuccessful){
+            val weatherForecast = WeatherMapper.mapForecast(response.body()!!)
+            return Resource.Success(weatherForecast)
+        }
+        val error = getError(response.errorBody()!!.charStream())
+        return Resource.Error(error = ErrorData(error?.cod,error?.message))
     }
 }

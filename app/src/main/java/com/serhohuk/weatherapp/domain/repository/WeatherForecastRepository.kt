@@ -11,5 +11,5 @@ interface WeatherForecastRepository {
                                    language : String = "en") : Resource<WeatherForecast>
 
     suspend fun getForecastWeather(cityName : String,
-                                    language: String = "en") : Response<WeatherForecast>
+                                    language: String = "en") : Resource<WeatherForecast>
 }
