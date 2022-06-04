@@ -1,14 +1,17 @@
 package com.serhohuk.weatherapp.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.serhohuk.weatherapp.data.utils.Resource
+import com.serhohuk.weatherapp.domain.models.WeatherCurrent
+import com.serhohuk.weatherapp.domain.models.WeatherForecast
 import com.serhohuk.weatherapp.domain.usecase.ForecastCoordUseCase
 import com.serhohuk.weatherapp.domain.usecase.ForecastUseCase
 import com.serhohuk.weatherapp.domain.usecase.WeatherCoordUseCase
 import com.serhohuk.weatherapp.domain.usecase.WeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,32 +23,41 @@ class MainViewModel @Inject constructor(
     private val weatherUseCase: WeatherUseCase
 ): ViewModel() {
 
+    private val flowForecastWeather : MutableStateFlow<Resource<WeatherForecast>> = MutableStateFlow(Resource.Empty())
+    val stateFlowForecast = flowForecastWeather.asStateFlow()
 
-    fun getResponse(){
+    private val flowCurrentWeather : MutableStateFlow<Resource<WeatherCurrent>> = MutableStateFlow(Resource.Empty())
+    val stateFlowCurrent = flowCurrentWeather.asStateFlow()
+
+    fun getWeatherForecastCoord(latitude : Double, longitude : Double, language : String = "en"){
         viewModelScope.launch {
-            val response = forecastCoordUseCase.execute(48.86, 2.34)
-            when(response){
-                is Resource.Success->{
-                    Log.d("WEATHER_TEST", response.data.toString())
-                }
-                is  Resource.Error -> {
-                    Log.d("WEATHER_TEST", response.error!!.code.toString())
-                }
-            }
+            flowForecastWeather.value = Resource.Loading()
+            val response = forecastCoordUseCase.execute(latitude, longitude, language)
+            flowForecastWeather.value = response
         }
     }
 
-    fun getWeatherNow(){
+    fun getWeatherForecast(cityName : String, language : String = "en"){
         viewModelScope.launch {
-            val response = weatherUseCase.execute("Kyiv")
-            when(response){
-                is Resource.Success->{
-                    Log.d("WEATHER_TEST", response.data.toString())
-                }
-                is  Resource.Error -> {
-                    Log.d("WEATHER_TEST", response.error!!.code.toString())
-                }
-            }
+            flowForecastWeather.value = Resource.Loading()
+            val response = forecastUseCase.execute(cityName, language)
+            flowForecastWeather.value = response
+        }
+    }
+
+    fun getWeatherCurrent(cityName: String, language: String){
+        viewModelScope.launch {
+            flowCurrentWeather.value = Resource.Loading()
+            val response = weatherUseCase.execute(cityName,language)
+           flowCurrentWeather.value = response
+        }
+    }
+
+    fun getWeatherCurrentCoord(latitude : Double, longitude : Double, language: String){
+        viewModelScope.launch {
+            flowCurrentWeather.value = Resource.Loading()
+            val response = weatherCoordUseCase.execute(latitude, longitude, language)
+            flowCurrentWeather.value = response
         }
     }
 }

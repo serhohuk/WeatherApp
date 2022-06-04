@@ -16,6 +16,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_WeatherApp)
         setContentView(R.layout.activity_main)
-        viewModel.getWeatherNow()
+
     }
 }
