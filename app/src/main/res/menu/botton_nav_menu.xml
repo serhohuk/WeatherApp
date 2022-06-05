@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/weatherNowFragment"
+        android:title="@string/today"
+        android:icon="@drawable/ic_today_weather"
+        />
+
+    <item android:id="@+id/forecastWeatherFragment"
+        android:title="@string/_5_days"
+        android:icon="@drawable/ic_days_range"
+        />
+
+    <item android:id="@+id/googleMapFragment"
+        android:title="@string/map"
+        android:icon="@drawable/ic_map"
+        />
+
+</menu>

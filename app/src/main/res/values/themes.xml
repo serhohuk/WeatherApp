@@ -16,7 +16,10 @@
     
     <style name="AppLoadSplashScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_with_logo</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/white</item>
+        <item name="windowActionBar">false</item>
     </style>
     
 </resources>
