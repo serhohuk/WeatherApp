@@ -9,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.serhohuk.weatherapp.R
+import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +29,9 @@ class MainActivity : AppCompatActivity() {
         val navController = fragment.navController
         bottomNav.setupWithNavController(navController)
 
-        viewModel.getWeatherCurrent("Kyiv", "uk")
+        if (ConnectionChecker.getConnectionType(this)!=0){
+            viewModel.getWeatherCurrent("Kyiv", "uk")
+        }
 
         viewModel.coordinatesData.observe(this, Observer {
             navController.navigate(R.id.weatherNowFragment)

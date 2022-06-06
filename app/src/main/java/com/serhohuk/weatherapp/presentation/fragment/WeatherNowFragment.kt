@@ -1,23 +1,28 @@
 package com.serhohuk.weatherapp.presentation.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.serhohuk.weatherapp.R
 import com.serhohuk.weatherapp.data.utils.Resource
 import com.serhohuk.weatherapp.databinding.FragmentWeatherNowBinding
 import com.serhohuk.weatherapp.presentation.MainActivity
+import com.serhohuk.weatherapp.presentation.utils.KeyboardUtils
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.roundToInt
 
 class WeatherNowFragment : Fragment() {
@@ -26,6 +31,7 @@ class WeatherNowFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private lateinit var job : Job
+    private var jobSearch : Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,11 +46,53 @@ class WeatherNowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         handleWeatherResponse()
+        setCurrentDate()
 
         binding.ivSearch.setOnClickListener {
-            Toast.makeText(activity, "it.error?.message", Toast.LENGTH_LONG).show()
-
+            binding.flSearch.visibility = VISIBLE
+            binding.etSearch.requestFocus()
+            KeyboardUtils.showKeyboard(binding.etSearch)
         }
+
+        binding.etSearch.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.flSearch.visibility = GONE
+                true
+            }
+            false
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.flSearch.visibility = GONE
+            binding.etSearch.text.clear()
+            viewModel.getWeatherCurrent("Kyiv", "uk")
+        }
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                var text = s.toString()
+                if (jobSearch!=null){
+                    jobSearch?.cancel()
+                }
+                jobSearch = lifecycleScope.launch(Dispatchers.Main) {
+                    delay(600)
+                    if (text.isNotEmpty()) {
+                        KeyboardUtils.hideKeyboard(binding.etSearch)
+                        binding.flSearch.visibility = GONE
+                        viewModel.getWeatherCurrent(text,"uk")
+                    }
+                }
+            }
+
+        })
     }
 
     private fun handleWeatherResponse(){
@@ -53,6 +101,7 @@ class WeatherNowFragment : Fragment() {
                 when(it){
                     is Resource.Success ->{
                         ensureActive()
+                        binding.swipeRefresh.isRefreshing = false
                         binding.flProgress.visibility = View.GONE
                         it.data?.let { data->
                             binding.tvWeatherPlace.text = "${data.name},${data.sys?.country}"
@@ -78,6 +127,12 @@ class WeatherNowFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setCurrentDate(){
+        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
+        val currentDate: String = sdf.format(Date())
+        binding.tvDate.text = currentDate
     }
 
     override fun onStop() {
