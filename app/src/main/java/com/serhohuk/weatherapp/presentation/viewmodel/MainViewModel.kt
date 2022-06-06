@@ -1,8 +1,10 @@
 package com.serhohuk.weatherapp.presentation.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.serhohuk.weatherapp.data.utils.Resource
+import com.serhohuk.weatherapp.domain.models.GeoPoint
 import com.serhohuk.weatherapp.domain.models.WeatherCurrent
 import com.serhohuk.weatherapp.domain.models.WeatherForecast
 import com.serhohuk.weatherapp.domain.usecase.ForecastCoordUseCase
@@ -28,6 +30,8 @@ class MainViewModel @Inject constructor(
 
     private val flowCurrentWeather : MutableStateFlow<Resource<WeatherCurrent>> = MutableStateFlow(Resource.Empty())
     val stateFlowCurrent = flowCurrentWeather.asStateFlow()
+
+    val coordinatesData : MutableLiveData<GeoPoint> = MutableLiveData()
 
     fun getWeatherForecastCoord(latitude : Double, longitude : Double, language : String = "en"){
         viewModelScope.launch {

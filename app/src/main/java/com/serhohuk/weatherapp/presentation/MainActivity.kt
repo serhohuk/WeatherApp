@@ -1,18 +1,14 @@
 package com.serhohuk.weatherapp.presentation
 
+import android.location.LocationRequest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.serhohuk.weatherapp.R
-import com.serhohuk.weatherapp.databinding.ActivityMainBinding
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,5 +29,10 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setupWithNavController(navController)
 
         viewModel.getWeatherCurrent("Kyiv", "uk")
+
+        viewModel.coordinatesData.observe(this, Observer {
+            navController.navigate(R.id.weatherNowFragment)
+            viewModel.getWeatherCurrentCoord(it.lat, it.lon, "uk")
+        })
     }
 }

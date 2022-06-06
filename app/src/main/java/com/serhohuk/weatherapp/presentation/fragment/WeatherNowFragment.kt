@@ -14,6 +14,9 @@ import com.serhohuk.weatherapp.data.utils.Resource
 import com.serhohuk.weatherapp.databinding.FragmentWeatherNowBinding
 import com.serhohuk.weatherapp.presentation.MainActivity
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
 
@@ -22,6 +25,7 @@ class WeatherNowFragment : Fragment() {
     private var _binding : FragmentWeatherNowBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
+    private lateinit var job : Job
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,10 +48,11 @@ class WeatherNowFragment : Fragment() {
     }
 
     private fun handleWeatherResponse(){
-        lifecycleScope.launchWhenCreated {
+        job = lifecycleScope.launchWhenCreated {
             viewModel.stateFlowCurrent.collectLatest {
                 when(it){
                     is Resource.Success ->{
+                        ensureActive()
                         binding.flProgress.visibility = View.GONE
                         it.data?.let { data->
                             binding.tvWeatherPlace.text = "${data.name},${data.sys?.country}"
@@ -73,6 +78,11 @@ class WeatherNowFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        job.cancel()
     }
 
     override fun onDestroyView() {
