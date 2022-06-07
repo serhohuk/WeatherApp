@@ -10,7 +10,7 @@
         android:label="WeatherNowFragment" />
     <fragment
         android:id="@+id/googleMapFragment"
-        android:name="com.serhohuk.weatherapp.presentation.fragment.GoogleMapFragment"
+        android:name="com.serhohuk.weatherapp.presentation.fragment.MapFragment"
         android:label="GoogleMapFragment" />
     <fragment
         android:id="@+id/forecastWeatherFragment"

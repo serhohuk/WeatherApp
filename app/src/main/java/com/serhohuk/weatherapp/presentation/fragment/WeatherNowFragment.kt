@@ -22,6 +22,7 @@ import com.serhohuk.weatherapp.R
 import com.serhohuk.weatherapp.data.utils.Resource
 import com.serhohuk.weatherapp.databinding.FragmentWeatherNowBinding
 import com.serhohuk.weatherapp.presentation.MainActivity
+import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
 import com.serhohuk.weatherapp.presentation.utils.KeyboardUtils
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
 import kotlinx.coroutines.*
@@ -36,6 +37,7 @@ class WeatherNowFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: MainViewModel
     private lateinit var job : Job
+    private lateinit var jobForecast : Job
     private var jobSearch : Job? = null
 
     override fun onCreateView(
@@ -70,7 +72,7 @@ class WeatherNowFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener {
             binding.flSearch.visibility = GONE
             binding.etSearch.text.clear()
-            viewModel.getWeatherCurrent("Kyiv", "uk")
+            viewModel.getWeatherCurrent("Kyiv", Locale.getDefault().language)
         }
 
         binding.etSearch.addTextChangedListener(object : TextWatcher{
@@ -88,11 +90,18 @@ class WeatherNowFragment : Fragment() {
                     jobSearch?.cancel()
                 }
                 jobSearch = lifecycleScope.launch(Dispatchers.Main) {
-                    delay(600)
-                    if (text.isNotEmpty()) {
-                        KeyboardUtils.hideKeyboard(binding.etSearch)
-                        binding.flSearch.visibility = GONE
-                        viewModel.getWeatherCurrent(text,"uk")
+                    if (ConnectionChecker.getConnectionType(requireContext())!=0){
+                        delay(600)
+                        if (text.isNotEmpty()) {
+                            KeyboardUtils.hideKeyboard(binding.etSearch)
+                            binding.flSearch.visibility = GONE
+                            viewModel.getWeatherCurrent(text,Locale.getDefault().language)
+                        }
+                    } else {
+                        delay(600)
+                        Toast.makeText(requireContext(),
+                            "You are offline , search unavailable",
+                            Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -134,7 +143,7 @@ class WeatherNowFragment : Fragment() {
                 }
             }
         }
-        lifecycleScope.launchWhenCreated {
+        jobForecast = lifecycleScope.launchWhenCreated {
             viewModel.stateFlowForecast.collectLatest {
                 when(it){
                     is Resource.Success -> {
@@ -189,6 +198,7 @@ class WeatherNowFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         job.cancel()
+        jobForecast.cancel()
     }
 
     override fun onDestroyView() {

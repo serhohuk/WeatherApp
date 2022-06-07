@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.serhohuk.weatherapp.databinding.FragmentGoogleMapBinding
 import com.serhohuk.weatherapp.presentation.MainActivity
+import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -33,7 +34,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 
-class GoogleMapFragment : Fragment() {
+class MapFragment : Fragment() {
 
     private var _binding : FragmentGoogleMapBinding? =  null
     private val binding get() = _binding!!
@@ -81,9 +82,15 @@ class GoogleMapFragment : Fragment() {
                 marker.position = p
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 marker.setOnMarkerClickListener { marker, mapView ->
-                    viewModel.coordinatesData.value =
-                        com.serhohuk.weatherapp.domain.models.GeoPoint(
-                            marker.position.latitude, marker.position.longitude)
+                    if (ConnectionChecker.getConnectionType(requireContext())!=0){
+                        viewModel.coordinatesData.value =
+                            com.serhohuk.weatherapp.domain.models.GeoPoint(
+                                marker.position.latitude, marker.position.longitude)
+                    } else {
+                        Toast.makeText(requireContext(),
+                            "You are offline , map unavailable",
+                            Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 binding.map.overlays.add(marker)
@@ -126,9 +133,15 @@ class GoogleMapFragment : Fragment() {
         provider.addLocationSource(LocationManager.NETWORK_PROVIDER)
         val locationNewOverlay = object : MyLocationNewOverlay(provider, binding.map){
             override fun onSingleTapConfirmed(e: MotionEvent?, mapView: MapView?): Boolean {
-                viewModel.coordinatesData.value = com.serhohuk.weatherapp.domain.models.GeoPoint(
-                    myLocation.latitude, myLocation.longitude
-                )
+                if(ConnectionChecker.getConnectionType(requireContext())!=0){
+                    viewModel.coordinatesData.value = com.serhohuk.weatherapp.domain.models.GeoPoint(
+                        myLocation.latitude, myLocation.longitude
+                    )
+                } else {
+                    Toast.makeText(requireContext(),
+                        "You are offline , map unavailable",
+                        Toast.LENGTH_SHORT).show()
+                }
                 return true
             }
 

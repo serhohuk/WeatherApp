@@ -8,3 +8,10 @@ data class WeatherForecast(
     var cnt: Int?,
     var list: List<WeatherInfoResponse>?,
 )
+
+data class SimpleForecast(
+    var imageId : String,
+    var dt : String,
+    var minT : Int,
+    var maxT : Int
+)
