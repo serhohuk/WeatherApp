@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         if (ConnectionChecker.getConnectionType(this)!=0){
             viewModel.getWeatherCurrent("Kyiv", "uk")
+            viewModel.getWeatherForecast("Kyiv", "uk")
         }
 
         viewModel.coordinatesData.observe(this, Observer {

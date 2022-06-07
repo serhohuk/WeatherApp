@@ -1,5 +1,6 @@
 package com.serhohuk.weatherapp.presentation.fragment
 
+import android.graphics.Color.green
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,9 +11,13 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.serhohuk.weatherapp.R
 import com.serhohuk.weatherapp.data.utils.Resource
 import com.serhohuk.weatherapp.databinding.FragmentWeatherNowBinding
@@ -118,15 +123,61 @@ class WeatherNowFragment : Fragment() {
                         }
                     }
                     is Resource.Error -> {
+                        ensureActive()
                         binding.flProgress.visibility = View.GONE
                         Toast.makeText(activity, it.error?.message, Toast.LENGTH_LONG).show()
                     }
                     is Resource.Loading -> {
+                        ensureActive()
                         binding.flProgress.visibility = View.VISIBLE
                     }
                 }
             }
         }
+        lifecycleScope.launchWhenCreated {
+            viewModel.stateFlowForecast.collectLatest {
+                when(it){
+                    is Resource.Success -> {
+                        ensureActive()
+                        val tempList = it.data!!.list!!.map { weatherInfo ->
+                            weatherInfo.main!!.temp!!.roundToInt()
+                        }.take(8)
+                        setChartView(tempList)
+                    }
+                    is Resource.Error -> {
+                        ensureActive()
+                        binding.flProgress.visibility = View.GONE
+                        Toast.makeText(activity, it.error?.message, Toast.LENGTH_LONG).show()
+                    }
+                    is Resource.Loading -> {
+                        ensureActive()
+                        binding.flProgress.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setChartView(data : List<Int>){
+        val entries = mutableListOf<Entry>()
+        data.forEachIndexed { index, i ->
+            entries.add(Entry((index+1).toFloat(),i.toFloat()))
+        }
+        val dataSet = LineDataSet(entries,"Temperature")
+        dataSet.setColor(resources.getColor(R.color.light_blue))
+        dataSet.valueTextColor = resources.getColor(R.color.teal_700)
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER)
+        dataSet.setDrawFilled(true)
+        dataSet.disableDashedLine()
+        dataSet.setFillColor(ContextCompat.getColor(requireContext(),R.color.light_blue))
+        val lineData = LineData(dataSet)
+        binding.lineChart.data = lineData
+        binding.lineChart.description.text = "3-hours Interval"
+        binding.lineChart.setTouchEnabled(false)
+        binding.lineChart.getAxisLeft().setDrawGridLines(false);
+        binding.lineChart.getAxisRight().setDrawGridLines(false);
+        binding.lineChart.getXAxis().setDrawGridLines(false);
+        binding.lineChart.invalidate()
     }
 
     private fun setCurrentDate(){
