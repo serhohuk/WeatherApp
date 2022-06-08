@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.serhohuk.weatherapp.databinding.FragmentGoogleMapBinding
 import com.serhohuk.weatherapp.presentation.MainActivity
 import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
@@ -38,7 +39,7 @@ class MapFragment : Fragment() {
 
     private var _binding : FragmentGoogleMapBinding? =  null
     private val binding get() = _binding!!
-    private lateinit var viewModel : MainViewModel
+    private val viewModel : MainViewModel by activityViewModels()
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -57,7 +58,6 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentGoogleMapBinding.inflate(inflater,container,false)
-        viewModel = (activity as MainActivity).viewModel
         return binding.root
     }
 

@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.github.mikephil.charting.data.Entry
@@ -35,7 +36,7 @@ class WeatherNowFragment : Fragment() {
 
     private var _binding : FragmentWeatherNowBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var job : Job
     private lateinit var jobForecast : Job
     private var jobSearch : Job? = null
@@ -46,7 +47,6 @@ class WeatherNowFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWeatherNowBinding.inflate(inflater,container,false)
-        viewModel = (activity as MainActivity).viewModel
         return binding.root
     }
 

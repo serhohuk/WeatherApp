@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +24,7 @@ class ForecastWeatherFragment : Fragment() {
 
     private var _binding : FragmentForecastBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel : MainViewModel
+    private val viewModel : MainViewModel by activityViewModels()
     private lateinit var job : Job
     private lateinit var adapter: ForecastAdapter
 
@@ -33,7 +34,6 @@ class ForecastWeatherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentForecastBinding.inflate(inflater, container, false)
-        viewModel = (activity as MainActivity).viewModel
         return binding.root
     }
 
