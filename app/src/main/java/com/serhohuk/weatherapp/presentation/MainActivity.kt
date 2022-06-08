@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 import com.serhohuk.weatherapp.R
 import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel

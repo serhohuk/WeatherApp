@@ -4,9 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_days_range.xml" value="0.142" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_days_range_filled.xml" value="0.252" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_days_range_selector.xml" value="0.252" />
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_map.xml" value="0.142" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_map_selector.xml" value="0.252" />
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_place_loc.xml" value="0.1045" />
-        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_today_weather.xml" value="0.142" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_search.xml" value="0.252" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_today_weather.xml" value="0.152" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_today_weather_filled.xml" value="0.152" />
+        <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/ic_today_weather_selector.xml" value="0.252" />
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/rounded_corners.xml" value="0.1" />
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/selector_bottom_nav_view.xml" value="0.1365" />
         <entry key="..\:/Users/serhh/AndroidStudioProjects/WeatherApp/app/src/main/res/drawable/splash_screen_with_logo.xml" value="0.206" />

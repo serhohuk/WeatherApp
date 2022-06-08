@@ -3,17 +3,17 @@
 
     <item android:id="@+id/weatherNowFragment"
         android:title="@string/today"
-        android:icon="@drawable/ic_today_weather"
+        android:icon="@drawable/ic_today_weather_selector"
         />
 
     <item android:id="@+id/forecastWeatherFragment"
         android:title="@string/_5_days"
-        android:icon="@drawable/ic_days_range"
+        android:icon="@drawable/ic_days_range_selector"
         />
 
     <item android:id="@+id/googleMapFragment"
         android:title="@string/map"
-        android:icon="@drawable/ic_map"
+        android:icon="@drawable/ic_map_selector"
         />
 
 </menu>
