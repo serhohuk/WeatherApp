@@ -1,5 +1,7 @@
 package com.serhohuk.weatherapp.presentation.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color.green
 import android.os.Bundle
 import android.text.Editable
@@ -30,6 +32,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.roundToInt
 
 class WeatherNowFragment : Fragment() {
@@ -40,6 +43,7 @@ class WeatherNowFragment : Fragment() {
     private lateinit var job : Job
     private lateinit var jobForecast : Job
     private var jobSearch : Job? = null
+    lateinit var shPrefs : SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +51,7 @@ class WeatherNowFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWeatherNowBinding.inflate(inflater,container,false)
+        shPrefs = requireActivity().getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
         return binding.root
     }
 
@@ -72,7 +77,7 @@ class WeatherNowFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener {
             binding.flSearch.visibility = GONE
             binding.etSearch.text.clear()
-            viewModel.getWeatherCurrent("Kyiv", Locale.getDefault().language)
+            viewModel.getWeatherCurrent(shPrefs.getString("city", "Kyiv") ?: "Kyiv", Locale.getDefault().language)
         }
 
         binding.etSearch.addTextChangedListener(object : TextWatcher{
@@ -118,6 +123,7 @@ class WeatherNowFragment : Fragment() {
                         binding.swipeRefresh.isRefreshing = false
                         binding.flProgress.visibility = View.GONE
                         it.data?.let { data->
+                            shPrefs.edit().putString("city",data.name).apply()
                             binding.tvWeatherPlace.text = "${data.name},${data.sys?.country}"
                             binding.tvWeatherDescription.text = data.weather?.get(0)?.description.toString().replaceFirstChar { char ->
                                 char.uppercase()

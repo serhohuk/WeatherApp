@@ -1,5 +1,7 @@
 package com.serhohuk.weatherapp.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.serhohuk.weatherapp.data.repositoryImpl.WeatherForecastRepositoryImpl
 import com.serhohuk.weatherapp.data.repositoryImpl.WeatherRequestRepositoryImpl
 import com.serhohuk.weatherapp.domain.repository.WeatherForecastRepository
@@ -11,6 +13,7 @@ import com.serhohuk.weatherapp.domain.usecase.WeatherUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -46,4 +49,10 @@ object HiltModule {
     @Singleton
     @Provides
     fun provideCurrentCoordUseCase(repository : WeatherRequestRepository) = WeatherCoordUseCase(repository)
+
+    @Singleton
+    @Provides
+    fun provideSharedPreference(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+    }
 }

@@ -1,5 +1,6 @@
 package com.serhohuk.weatherapp.presentation
 
+import android.content.SharedPreferences
 import android.location.LocationRequest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,12 +15,14 @@ import com.serhohuk.weatherapp.presentation.utils.ConnectionChecker
 import com.serhohuk.weatherapp.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     val viewModel : MainViewModel by viewModels()
     private lateinit var bottomNav : BottomNavigationView
+    @Inject lateinit var shPrefs : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +35,8 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setupWithNavController(navController)
 
         if (ConnectionChecker.getConnectionType(this)!=0){
-            viewModel.getWeatherCurrent("Kyiv", Locale.getDefault().language)
-            viewModel.getWeatherForecast("Kyiv", Locale.getDefault().language)
+            viewModel.getWeatherCurrent(shPrefs.getString("city", "Kyiv") ?: "Kyiv", Locale.getDefault().language)
+            viewModel.getWeatherForecast(shPrefs.getString("city", "Kyiv")?: "Kyiv", Locale.getDefault().language)
         }
 
         viewModel.coordinatesData.observe(this, Observer {
