@@ -101,6 +101,7 @@ class WeatherNowFragment : Fragment() {
                             KeyboardUtils.hideKeyboard(binding.etSearch)
                             binding.flSearch.visibility = GONE
                             viewModel.getWeatherCurrent(text,Locale.getDefault().language)
+                            viewModel.getWeatherForecast(text, Locale.getDefault().language)
                         }
                     } else {
                         delay(600)
